@@ -152,10 +152,6 @@ function renderHome() {
           <button class="secondary" data-route-button="library">افتح مكتبتي</button>
         </div>
       </div>
-      <div class="hero-card">
-        <h2>نظام تفاعل حقيقي</h2>
-        <p>تسجيل دخول، متابعة روايات، متابعة كتاب، تعليقات، إعجابات، تبليغات، حفظ تقدم القراءة، ومكتبة شخصية.</p>
-      </div>
     </section>
 
     <div class="section-head">
