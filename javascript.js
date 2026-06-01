@@ -1,43 +1,12 @@
 const STORAGE_KEY = "hikayat_state_v1";
 const FALLBACK_COVER = "";
-
-const showcaseAuthors = [
-  { id: "author_sara", name: "سارة منير", email: "sara@hikayat.local", passwordHash: "" },
-  { id: "author_ahmed", name: "أحمد الراوي", email: "ahmed@hikayat.local", passwordHash: "" },
-  { id: "author_karim", name: "كريم الخطيب", email: "karim@hikayat.local", passwordHash: "" },
-  { id: "author_laila", name: "ليلى المهدي", email: "laila@hikayat.local", passwordHash: "" },
-  { id: "author_hind", name: "هند العلي", email: "hind@hikayat.local", passwordHash: "" },
-  { id: "author_shady", name: "فادي شعبان", email: "fady@hikayat.local", passwordHash: "" }
-];
-
-const showcaseNovels = [
-  createShowcaseNovel("novel_moon", "همسة القمر", "رومانسي / دراما", "author_sara", "فتاة تختبئ خلف صمتها، وقلب يخفق لأول مرة تحت ضوء القمر، عندما تتقاطع الأقدار في زاوية من المدينة تبدأ قصة لا تُنسى.", "ongoing", "cover-moon", 96, "890k", 4.7, "2026-05-29T20:00:00.000Z"),
-  createShowcaseNovel("novel_sword", "سيف النور", "خيال / مغامرة", "author_ahmed", "في مملكة يحكمها الظلام، يظهر فتى يحمل سيفاً يتوهج بنور الحق. رحلة ملحمية بين الممالك السبع حيث الأصدقاء قد يخونون، والأعداء قد يصبحون رفاقاً.", "ongoing", "cover-sword", 74, "1241k", 4.8, "2026-05-28T18:00:00.000Z"),
-  createShowcaseNovel("novel_alley", "زقاق منتصف الليل", "غموض / إثارة", "author_karim", "محقق منعزل، جثة مجهولة، ومدينة تخفي أكثر مما تظهر. كل سطر يقودك إلى الحقيقة، وكل حقيقة تفتح باباً جديداً للشك.", "ongoing", "cover-alley", 42, "2100k", 4.9, "2026-05-30T11:00:00.000Z"),
-  createShowcaseNovel("novel_neon", "رمال من نيون", "خيال علمي", "author_laila", "في مدينة مستقبلية فوق الصحراء، يبحث شاب عن ذاكرة مسروقة تقوده إلى سر يهدد العالم كله.", "ongoing", "cover-city", 63, "540k", 4.6, "2026-05-27T09:00:00.000Z"),
-  createShowcaseNovel("novel_house", "البيت المسكون", "رعب", "author_shady", "عائلة تنتقل إلى بيت قديم فتكتشف أن الجدران تعرف أسماءهم وأن الليل لا ينتهي عند الفجر.", "completed", "cover-house", 31, "381k", 4.5, "2026-05-25T16:00:00.000Z"),
-  createShowcaseNovel("novel_damascus", "غروب في دمشق", "دراما تاريخية", "author_hind", "بين أزقة دمشق القديمة، تتقاطع حكايات الحب والفقدان في مساء ذهبي لا يشبه غيره.", "ongoing", "cover-damascus", 55, "1530k", 4.9, "2026-05-26T13:00:00.000Z")
-];
-
-function createShowcaseNovel(id, title, category, authorId, description, status, coverTone, chaptersCount, views, rating, updatedAt) {
-  return {
-    id, title, category, authorId, description, status, cover: "", coverTone, chaptersCount, views, rating, updatedAt,
-    createdAt: updatedAt,
-    chapters: Array.from({ length: Math.min(chaptersCount, 4) }, (_, index) => ({
-      id: `${id}_chapter_${index + 1}`,
-      title: `الفصل ${index + 1}: ${index === 0 ? "البداية" : "السر يقترب"}`,
-      summary: "فصل جديد يأخذك خطوة أعمق داخل الحكاية.",
-      content: "في تلك الليلة كان كل شيء مختلفاً. امتد الصمت فوق المدينة مثل ستار ثقيل، بينما كانت الشخصيات تبحث عن إجابة واحدة تستطيع تغيير مصيرها بالكامل.\n\nومع كل صفحة، كان الخوف والأمل يتبادلان الأماكن، حتى صار الطريق إلى النهاية أكثر غموضاً وجمالاً.",
-      published: true,
-      createdAt: new Date(new Date(updatedAt).getTime() + index * 3600000).toISOString()
-    }))
-  };
-}
+const SHOWCASE_AUTHOR_IDS = new Set(["author_sara", "author_ahmed", "author_karim", "author_laila", "author_hind", "author_shady"]);
+const SHOWCASE_NOVEL_IDS = new Set(["novel_moon", "novel_sword", "novel_alley", "novel_city", "novel_neon", "novel_house", "novel_damascus"]);
 
 const initialState = {
-  users: showcaseAuthors,
+  users: [],
   sessionUserId: null,
-  novels: showcaseNovels,
+  novels: [],
   follows: [],
   authorFollows: [],
   comments: [],
@@ -75,18 +44,12 @@ function loadState() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!parsed) return structuredClone(initialState);
-    const mergedUsers = mergeById(showcaseAuthors, parsed.users || []);
-    const mergedNovels = mergeById(showcaseNovels, parsed.novels || []);
-    return { ...initialState, ...parsed, users: mergedUsers, novels: mergedNovels, theme: "dark" };
+    const users = (parsed?.users || []).filter(user => !SHOWCASE_AUTHOR_IDS.has(user.id));
+    const novels = (parsed?.novels || []).filter(novel => !SHOWCASE_NOVEL_IDS.has(novel.id));
+    return { ...initialState, ...parsed, users, novels, theme: parsed?.theme || initialState.theme };
   } catch {
     return structuredClone(initialState);
   }
-}
-
-function mergeById(baseItems, savedItems) {
-  const map = new Map(baseItems.map(item => [item.id, structuredClone(item)]));
-  savedItems.forEach(item => map.set(item.id, item));
-  return Array.from(map.values());
 }
 
 function saveState() {
@@ -168,9 +131,6 @@ function render() {
   if (currentRoute === "write") return renderWrite();
   if (currentRoute === "my-writing") return renderMyWriting();
   if (currentRoute === "library") return renderLibrary();
-  if (currentRoute === "categories") return renderCollection("التصنيفات", state.novels, "استكشف كل العوالم والأنواع القصصية في حكايات.");
-  if (currentRoute === "latest") return renderCollection("أحدث الفصول", [...state.novels].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)), "آخر الروايات التي حصلت على فصول وتحديثات جديدة.");
-  if (currentRoute === "completed") return renderCollection("الروايات المكتملة", state.novels.filter(isComplete), "قصص جاهزة للقراءة من البداية للنهاية.");
   if (currentRoute === "profile") return renderProfile();
   if (currentRoute.startsWith("search")) return renderSearch(new URLSearchParams(currentRoute.split("?")[1]).get("q") || "");
   if (currentRoute === "privacy") return renderInfo("سياسة الخصوصية", "نحافظ على بياناتك داخل هذا النموذج المحلي، ولا تتم مشاركة أي بيانات مع طرف خارجي.");
@@ -181,84 +141,45 @@ function render() {
 function renderHome() {
   const novels = state.novels.filter(novel => publishedChapters(novel).length > 0);
   const latest = [...novels].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-  const featured = latest[0] || novels[0];
-  const picks = latest.slice(0, 3);
   setPage(`
-    ${featured ? `<section class="hero">
-      <div class="hero-cover">${coverMarkup(featured, false)}</div>
-      <div class="hero-content">
-        <span class="pill">الأكثر شعبية هذا الأسبوع</span>
-        <h1>${escapeHtml(featured.title)}</h1>
-        <p class="byline">${escapeHtml(authorName(featured.authorId))}</p>
-        <p>${escapeHtml(featured.description)}</p>
-        <div class="hero-stats">
-          <span><strong>${escapeHtml(featured.rating || "4.8")}</strong> ★ تقييم</span>
-          <span><strong>${escapeHtml(featured.views || "890k")}</strong> مشاهدة</span>
-          <span><strong>${publishedChapters(featured).length}</strong> فصول</span>
-        </div>
+    <section class="hero">
+      <div>
+        <span class="pill">روايات من إنشاء المستخدمين فقط</span>
+        <h1>اكتب روايتك، وانشر فصولك، وابنِ جمهورك.</h1>
+        <p>حكايات تعمل بدون أي روايات تجريبية. الصفحة الرئيسية تعرض فقط الروايات التي ينشئها المستخدمون وينشرون لها فصولاً.</p>
         <div class="hero-actions">
-          <button class="primary" data-read-first="${featured.id}" type="button">ابدأ القراءة</button>
-          <button class="secondary" data-follow-novel="${featured.id}" type="button">${isFollowingNovel(featured.id) ? "في مكتبتي" : "أضف لمكتبتي"}</button>
+          <button class="primary" data-action="write">ابدأ الكتابة الآن</button>
+          <button class="secondary" data-route-button="library">افتح مكتبتي</button>
         </div>
       </div>
-    </section>` : emptyState("لا توجد روايات منشورة بعد", "كن أول مستخدم ينشئ رواية وينشر فصلها الأول.", "اكتب", "write")}
+      <div class="hero-card">
+        <h2>نظام تفاعل حقيقي</h2>
+        <p>تسجيل دخول، متابعة روايات، متابعة كتاب، تعليقات، إعجابات، تبليغات، حفظ تقدم القراءة، ومكتبة شخصية.</p>
+      </div>
+    </section>
 
     <div class="section-head">
-      <span class="section-kicker">↗</span>
-      <h2>الأكثر شعبية هذا الأسبوع</h2>
+      <h2>الروايات المنشورة</h2>
+      <span class="pill">${latest.length} رواية</span>
     </div>
-    <p class="section-subtitle">روايات يقرأها الجميع الآن</p>
-    ${latest.length ? `<div class="grid">${latest.slice(0, 6).map(novelCard).join("")}</div>` : ""}
-
-    <div class="section-head">
-      <span class="section-kicker">☆</span>
-      <h2>اختيارات المحررين</h2>
-    </div>
-    <p class="section-subtitle">قصص ينصحك بها فريق حكايات</p>
-    ${picks.length ? `<div class="editor-grid">${picks.map(editorCard).join("")}</div>` : ""}
+    ${latest.length ? `<div class="grid">${latest.map(novelCard).join("")}</div>` : emptyState("لا توجد روايات منشورة بعد", "كن أول مستخدم ينشئ رواية وينشر فصلها الأول.", "اكتب", "write")}
   `);
-}
-
-function renderCollection(title, novels, subtitle = "") {
-  setPage(`
-    <div class="section-head"><span class="section-kicker">✦</span><h1>${escapeHtml(title)}</h1></div>
-    ${subtitle ? `<p class="section-subtitle">${escapeHtml(subtitle)}</p>` : ""}
-    ${novels.length ? `<div class="grid">${novels.map(novelCard).join("")}</div>` : emptyState("لا توجد روايات هنا حالياً", "تابع العودة لاحقاً أو ابدأ في نشر روايتك.", "اكتب", "write")}
-  `);
-}
-
-function coverMarkup(novel, withBadge = true) {
-  const title = escapeHtml(novel.title);
-  const status = isComplete(novel) ? "مكتملة" : "مستمرة";
-  if (novel.cover) {
-    return `<div class="cover">${withBadge ? `<span class="cover-badge">${status}</span>` : ""}<img src="${novel.cover}" alt="غلاف ${title}"></div>`;
-  }
-  const tone = escapeHtml(novel.coverTone || "cover-city");
-  return `<div class="cover">${withBadge ? `<span class="cover-badge">${status}</span>` : ""}<div class="cover-art ${tone}"><span>${title}</span></div></div>`;
 }
 
 function novelCard(novel) {
+  const chapters = publishedChapters(novel);
   return `
     <article class="novel-card">
-      <button class="cover" data-open-novel="${novel.id}" type="button">${coverMarkup(novel).replace(/^<div class="cover">|<\/div>$/g, "")}</button>
+      <button class="cover" data-open-novel="${novel.id}" type="button">${novel.cover ? `<img src="${novel.cover}" alt="غلاف ${escapeHtml(novel.title)}">` : escapeHtml(novel.title.slice(0, 28))}</button>
       <div class="novel-body">
         <h3>${escapeHtml(novel.title)}</h3>
-        <div class="meta"><span>${escapeHtml(authorName(novel.authorId))}</span></div>
-        <div class="card-stats"><span>${escapeHtml(novel.views || `${publishedChapters(novel).length * 120}k`)} ⊙</span><span>${escapeHtml(novel.rating || "4.6")}</span><span class="star">★</span></div>
-      </div>
-    </article>
-  `;
-}
-
-function editorCard(novel) {
-  return `
-    <article class="editor-card">
-      <button class="cover" data-open-novel="${novel.id}" type="button">${coverMarkup(novel, false).replace(/^<div class="cover">|<\/div>$/g, "")}</button>
-      <div>
-        <span class="pill">${escapeHtml(novel.category)}</span>
-        <h3>${escapeHtml(novel.title)}</h3>
-        <div class="meta"><span>${escapeHtml(authorName(novel.authorId))}</span></div>
-        <p>${escapeHtml(novel.description.slice(0, 145))}${novel.description.length > 145 ? "..." : ""}</p>
+        <div class="meta"><span>بقلم ${escapeHtml(authorName(novel.authorId))}</span><span>${escapeHtml(novel.category)}</span><span>${isComplete(novel) ? "مكتملة" : "غير مكتملة"}</span></div>
+        <p class="muted">${escapeHtml(novel.description.slice(0, 120))}${novel.description.length > 120 ? "..." : ""}</p>
+        <div class="actions">
+          <button class="primary" data-open-novel="${novel.id}" type="button">عرض الرواية</button>
+          <button class="secondary" data-follow-novel="${novel.id}" type="button">${isFollowingNovel(novel.id) ? "إزالة من مكتبتي" : "متابعة"}</button>
+        </div>
+        <span class="pill">${chapters.length} فصل منشور</span>
       </div>
     </article>
   `;
@@ -357,7 +278,7 @@ function renderNovel(novelId) {
   const comments = state.comments.filter(comment => comment.novelId === novel.id);
   setPage(`
     <section class="novel-detail">
-      <div class="hero-cover">${coverMarkup(novel, false)}</div>
+      <div class="novel-card"><div class="cover">${novel.cover ? `<img src="${novel.cover}" alt="غلاف ${escapeHtml(novel.title)}">` : escapeHtml(novel.title)}</div></div>
       <div class="panel">
         <h1>${escapeHtml(novel.title)}</h1>
         <p class="muted">${escapeHtml(novel.description)}</p>
