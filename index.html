@@ -1,1 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="حكايات منصة عربية لكتابة وقراءة الروايات من إنشاء المستخدمين فقط." />
+  <title>حكايات | منصة الروايات العربية</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar container" aria-label="القائمة الرئيسية">
+      <button class="icon-button mobile-only" id="menuToggle" type="button" aria-label="فتح القائمة">☰</button>
+      <a class="brand" href="#home" data-route="home" aria-label="العودة للرئيسية">
+        <span class="brand-mark">ح</span>
+        <span>حكايات</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#home" data-route="home">الرئيسية</a>
+        <a href="#my-writing" data-route="my-writing">مؤلفاتي</a>
+        <a href="#library" data-route="library">مكتبتي</a>
+      </div>
+      <form class="search-box" id="searchForm" role="search">
+        <input id="searchInput" type="search" placeholder="ابحث عن رواية أو كاتب" autocomplete="off" />
+        <button type="submit">بحث</button>
+        <div class="suggestions hidden" id="suggestions" aria-live="polite"></div>
+      </form>
+      <div class="header-actions">
+        <button class="primary write-button" id="writeTopButton" type="button">اكتب</button>
+        <button class="icon-button" id="themeToggle" type="button" aria-label="تبديل الوضع الليلي">🌙</button>
+        <button class="icon-button" id="notificationsButton" type="button" aria-label="الإشعارات">🔔<span id="notifyBadge" class="badge hidden">0</span></button>
+        <button class="secondary" id="authButton" type="button">تسجيل الدخول</button>
+        <div class="user-menu hidden" id="userMenu">
+          <button class="avatar-button" id="avatarButton" type="button" aria-label="قائمة المستخدم"><span id="avatarInitial">م</span></button>
+          <div class="dropdown hidden" id="userDropdown">
+            <button data-route="profile" type="button">ملفي الشخصي</button>
+            <button data-route="library" type="button">مكتبتي</button>
+            <button data-route="my-writing" type="button">مؤلفاتي</button>
+            <button id="logoutButton" type="button">تسجيل الخروج</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
 
+  <main id="app" class="container" tabindex="-1"></main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <section>
+        <div class="brand footer-brand"><span class="brand-mark">ح</span><span>حكايات</span></div>
+        <p>منصة عربية عصرية للروايات المنشورة بواسطة المستخدمين، بلا بيانات تجريبية أو محتوى وهمي.</p>
+      </section>
+      <section>
+        <h3>الدعم</h3>
+        <button class="footer-link" id="contactWhatsapp" type="button">تواصل معنا</button>
+        <button class="footer-link" id="privacyButton" type="button">سياسة الخصوصية</button>
+        <button class="footer-link" id="termsButton" type="button">شروط الاستخدام</button>
+      </section>
+      <section>
+        <h3>تطبيق حكايات</h3>
+        <p>قريباً على متاجر التطبيقات. يمكنك الآن القراءة والكتابة مباشرة من المتصفح.</p>
+      </section>
+    </div>
+    <p class="copyright">© 2026 جميع الحقوق محفوظة لموقع حكايات</p>
+  </footer>
+
+  <div class="modal hidden" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-card">
+      <button class="close-button" id="closeAuth" type="button" aria-label="إغلاق">×</button>
+      <h2 id="authTitle">تسجيل الدخول</h2>
+      <div class="tab-switch">
+        <button class="active" id="loginTab" type="button">دخول</button>
+        <button id="registerTab" type="button">حساب جديد</button>
+      </div>
+      <form id="authForm" class="form-stack">
+        <label class="register-only hidden">اسم المستخدم
+          <input id="displayName" type="text" minlength="2" placeholder="مثال: أحمد الكاتب" />
+        </label>
+        <label>البريد الإلكتروني
+          <input id="email" type="email" required placeholder="name@example.com" />
+        </label>
+        <label>كلمة المرور
+          <input id="password" type="password" required minlength="6" placeholder="6 أحرف على الأقل" />
+        </label>
+        <button class="primary full" id="authSubmit" type="submit">دخول</button>
+      </form>
+      <p class="hint">يتم حفظ الحساب محلياً داخل المتصفح لهذا النموذج العملي. كلمات المرور تُخزن كبصمة SHA-256 وليست كنص صريح.</p>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="javascript.js"></script>
+</body>
+</html>
