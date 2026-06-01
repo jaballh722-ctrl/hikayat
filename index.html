@@ -15,23 +15,25 @@
     <nav class="navbar container" aria-label="القائمة الرئيسية">
       <button class="icon-button mobile-only" id="menuToggle" type="button" aria-label="فتح القائمة">☰</button>
       <a class="brand" href="#home" data-route="home" aria-label="العودة للرئيسية">
-        <span class="brand-mark">ح</span>
+        <span class="brand-mark" aria-hidden="true">ح</span>
         <span>حكايات</span>
       </a>
       <div class="nav-links" id="navLinks">
         <a href="#home" data-route="home">الرئيسية</a>
-        <a href="#my-writing" data-route="my-writing">مؤلفاتي</a>
+        <a href="#categories" data-route="categories">التصنيفات</a>
+        <a href="#latest" data-route="latest">أحدث الفصول</a>
+        <a href="#completed" data-route="completed">المكتملة</a>
         <a href="#library" data-route="library">مكتبتي</a>
       </div>
       <form class="search-box" id="searchForm" role="search">
-        <input id="searchInput" type="search" placeholder="ابحث عن رواية أو كاتب" autocomplete="off" />
+        <input id="searchInput" type="search" placeholder="إبحث عن رواية، كاتب، تصنيف..." autocomplete="off" />
         <button type="submit">بحث</button>
         <div class="suggestions hidden" id="suggestions" aria-live="polite"></div>
       </form>
       <div class="header-actions">
         <button class="primary write-button" id="writeTopButton" type="button">اكتب</button>
-        <button class="icon-button" id="themeToggle" type="button" aria-label="تبديل الوضع الليلي">🌙</button>
-        <button class="icon-button" id="notificationsButton" type="button" aria-label="الإشعارات">🔔<span id="notifyBadge" class="badge hidden">0</span></button>
+        <button class="icon-button" id="themeToggle" type="button" aria-label="تبديل الوضع الليلي">☼</button>
+        <button class="icon-button" id="notificationsButton" type="button" aria-label="الإشعارات">♟<span id="notifyBadge" class="badge hidden">0</span></button>
         <button class="secondary" id="authButton" type="button">تسجيل الدخول</button>
         <div class="user-menu hidden" id="userMenu">
           <button class="avatar-button" id="avatarButton" type="button" aria-label="قائمة المستخدم"><span id="avatarInitial">م</span></button>
@@ -51,18 +53,20 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <section>
-        <div class="brand footer-brand"><span class="brand-mark">ح</span><span>حكايات</span></div>
-        <p>منصة عربية عصرية للروايات المنشورة بواسطة المستخدمين، بلا بيانات تجريبية أو محتوى وهمي.</p>
+        <div class="brand footer-brand"><span class="brand-mark" aria-hidden="true">ح</span><span>حكايات</span></div>
+        <p>منصة عربية حديثة لنشر وقراءة الروايات، آلاف القصص، كُتّاب موهوبون، وتجربة قراءة لا تُنسى في كل صفحة.</p>
       </section>
       <section>
-        <h3>الدعم</h3>
-        <button class="footer-link" id="contactWhatsapp" type="button">تواصل معنا</button>
-        <button class="footer-link" id="privacyButton" type="button">سياسة الخصوصية</button>
-        <button class="footer-link" id="termsButton" type="button">شروط الاستخدام</button>
+        <h3>روابط مهمة</h3>
+        <button class="footer-link" id="privacyButton" type="button">عن الموقع</button>
+        <button class="footer-link" id="termsButton" type="button">سياسة الخصوصية</button>
+        <button class="footer-link" type="button">شروط الاستخدام</button>
+        <button class="footer-link" type="button">حقوق الملكية (DMCA)</button>
       </section>
       <section>
-        <h3>تطبيق حكايات</h3>
-        <p>قريباً على متاجر التطبيقات. يمكنك الآن القراءة والكتابة مباشرة من المتصفح.</p>
+        <h3>تواصل معنا</h3>
+        <p>هل لديك سؤال أو اقتراح؟ يسعدنا تواصلك معنا في أي وقت.</p>
+        <button class="secondary" id="contactWhatsapp" type="button">اتصل بنا</button>
       </section>
     </div>
     <p class="copyright">© 2026 جميع الحقوق محفوظة لموقع حكايات</p>
